@@ -1,4 +1,4 @@
-import { setState, state } from "../state.js";
+import { setState, state, dispatch } from "../state.js";
 import Link from "./Link.js";
 import Separator from "./Separator.js";
 import FavoriteButton from "./FavoriteButton.js";
@@ -8,7 +8,8 @@ function ContactItem(props: any) {
     href: `/contact-detail`,
     label: `${props.firstName} ${props.lastName}`,
     onClick: () => {
-      setState({ contactId: props.id });
+      dispatch({ type: "SET_CONTACT_ID", payload: props.id });
+      // setState({ contactId: props.id });
     },
   });
 

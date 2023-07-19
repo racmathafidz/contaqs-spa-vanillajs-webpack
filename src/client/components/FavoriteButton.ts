@@ -1,4 +1,4 @@
-import { state, setState } from "../state.js";
+import { state, setState, dispatch } from "../state.js";
 
 export default function FavoriteButton(props: any) {
   const isFavorite = state.favoriteContacts.some((fav) => fav.id === props.id);
@@ -7,13 +7,21 @@ export default function FavoriteButton(props: any) {
   button.textContent = isFavorite ? "Remove from favorite" : "Add to favorite";
   button.onclick = function () {
     if (isFavorite) {
-      setState({
-        favoriteContacts: state.favoriteContacts.filter(
-          (e, i) => e.id !== props.id
-        ),
+      dispatch({
+        type: "SET_FAVORITE_STATUS",
+        payload: state.favoriteContacts.filter((e, i) => e.id !== props.id),
       });
+      // setState({
+      //   favoriteContacts: state.favoriteContacts.filter(
+      //     (e, i) => e.id !== props.id
+      //   ),
+      // });
     } else {
-      setState({ favoriteContacts: [...state.favoriteContacts, props] });
+      dispatch({
+        type: "SET_FAVORITE_STATUS",
+        payload: [...state.favoriteContacts, props],
+      });
+      // setState({ favoriteContacts: [...state.favoriteContacts, props] });
     }
   };
 

@@ -1,4 +1,4 @@
-import { setState } from "../state.js";
+import { setState, dispatch } from "../state.js";
 
 export default function Link(props: any) {
   const link = document.createElement("a");
@@ -7,7 +7,8 @@ export default function Link(props: any) {
   link.onclick = (event) => {
     event.preventDefault();
     const url = new URL((event.target as HTMLAnchorElement).href);
-    setState({ path: url.pathname });
+    dispatch({ type: "CHANGE_PAGE", payload: url.pathname });
+    // setState({ path: url.pathname });
     if (props.onClick) props.onClick();
   };
 

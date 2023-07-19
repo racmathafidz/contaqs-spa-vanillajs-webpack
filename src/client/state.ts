@@ -15,6 +15,11 @@ type State = {
   pageSkip: number;
 };
 
+type Action = {
+  type: string;
+  payload?: string | number | boolean | User | User[] | User["id"] | any;
+};
+
 const contactIdParam = new URL(window.location.href).searchParams.get("id");
 
 export let state: State = {
@@ -39,6 +44,76 @@ export function setState(newState: Partial<State>) {
   state = nextState;
   onStateChange(prevState, nextState);
   Render();
+}
+
+function reducer(prevState: Partial<State>, action: Action) {
+  switch (action.type) {
+    case "FETCH_ALL_USERS": {
+      return { ...prevState, loadingUsers: true };
+    }
+    case "FETCH_ALL_USERS_SUCCESS": {
+      return {
+        ...prevState,
+        loadingUsers: false,
+        contacts: action.payload?.users,
+        totalOfPages: Math.ceil(action.payload?.total / 5),
+        errorMessage: "",
+      };
+    }
+    case "FETCH_ALL_USERS_ERROR": {
+      return {
+        ...prevState,
+        loadingUsers: false,
+        contacts: [],
+        errorMessage: action.payload?.message,
+      };
+    }
+    case "FETCH_DETAIL_USER": {
+      return { ...prevState, loadingDetailUsers: true };
+    }
+    case "FETCH_DETAIL_USER_SUCCESS": {
+      return {
+        ...prevState,
+        loadingDetailUsers: false,
+        detailContact: action.payload,
+        errorMessage: "",
+      };
+    }
+    case "FETCH_DETAIL_USER_ERROR": {
+      return {
+        ...prevState,
+        loadingDetailUsers: false,
+        detailContact: null,
+        errorMessage: action.payload.message,
+      };
+    }
+    case "CHANGE_INPUT": {
+      return { ...prevState, inputValue: action.payload };
+    }
+    case "CLEAR_INPUT": {
+      return { ...prevState, inputValue: "" };
+    }
+    case "CHANGE_PAGE": {
+      return { ...prevState, path: action.payload };
+    }
+    case "SET_PAGINATION": {
+      return { ...prevState, pageSkip: action.payload };
+    }
+    case "SET_CONTACT_ID": {
+      return { ...prevState, contactId: action.payload };
+    }
+    case "SET_FAVORITE_STATUS": {
+      return { ...prevState, favoriteContacts: action.payload };
+    }
+    default: {
+      return prevState;
+    }
+  }
+}
+
+export function dispatch(action: Action) {
+  const newState = reducer(state, action);
+  setState(newState);
 }
 
 export function onStateChange(prevState: Partial<State>, nextState: State) {
@@ -72,22 +147,25 @@ export function onStateChange(prevState: Partial<State>, nextState: State) {
       url.searchParams.delete("id");
     } else {
       url.searchParams.set("id", nextState.contactId.toString());
-      setState({ loadingDetailUsers: true });
+      dispatch({ type: "FETCH_DETAIL_USER" });
+      // setState({ loadingDetailUsers: true });
       getDetailUser(nextState.contactId)
         .then((data) => {
-          setState({
-            loadingDetailUsers: false,
-            detailContact: data,
-            errorMessage: "",
-          });
+          dispatch({ type: "FETCH_DETAIL_USER_SUCCESS", payload: data });
+          // setState({
+          //   loadingDetailUsers: false,
+          //   detailContact: data,
+          //   errorMessage: "",
+          // });
         })
-        .catch((err) =>
-          setState({
-            loadingDetailUsers: false,
-            detailContact: null,
-            errorMessage: err.message,
-          })
-        );
+        .catch((err) => {
+          dispatch({ type: "FETCH_DETAIL_USER_ERROR", payload: err });
+          // setState({
+          //   loadingDetailUsers: false,
+          //   detailContact: null,
+          //   errorMessage: err.message,
+          // })
+        });
     }
     history.pushState({}, "", url.toString());
   }
@@ -96,7 +174,8 @@ export function onStateChange(prevState: Partial<State>, nextState: State) {
     prevState.pageSkip !== nextState.pageSkip
   ) {
     localStorage.setItem("inputValue", nextState.inputValue);
-    setState({ loadingUsers: true });
+    dispatch({ type: "FETCH_ALL_USERS" });
+    // setState({ loadingUsers: true });
 
     if (timeout) {
       clearTimeout(timeout);
@@ -109,20 +188,22 @@ export function onStateChange(prevState: Partial<State>, nextState: State) {
         skip: nextState.pageSkip,
       })
         .then((data) => {
-          setState({
-            loadingUsers: false,
-            contacts: data.users,
-            totalOfPages: Math.ceil(data.total / 5),
-            errorMessage: "",
-          });
+          dispatch({ type: "FETCH_ALL_USERS_SUCCESS", payload: data });
+          // setState({
+          //   loadingUsers: false,
+          //   contacts: data.users,
+          //   totalOfPages: Math.ceil(data.total / 5),
+          //   errorMessage: "",
+          // });
         })
-        .catch((err) =>
-          setState({
-            loadingUsers: false,
-            contacts: [],
-            errorMessage: err.message,
-          })
-        );
+        .catch((err) => {
+          dispatch({ type: "FETCH_ALL_USERS_ERROR", payload: err });
+          // setState({
+          //   loadingUsers: false,
+          //   contacts: [],
+          //   errorMessage: err.message,
+          // })
+        });
     }, 600);
   }
 }

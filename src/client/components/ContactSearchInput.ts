@@ -1,4 +1,4 @@
-import { state, setState } from "../state.js";
+import { state, setState, dispatch } from "../state.js";
 import Space from "./Space.js";
 
 export default function ContactSearchInput() {
@@ -7,13 +7,18 @@ export default function ContactSearchInput() {
   input.value = state.inputValue;
   input.placeholder = "Enter contact name";
   input.oninput = function (event) {
-    setState({ inputValue: (event.target as HTMLInputElement).value });
+    dispatch({
+      type: "CHANGE_INPUT",
+      payload: (event.target as HTMLInputElement).value,
+    });
+    // setState({ inputValue: (event.target as HTMLInputElement).value });
   };
 
   const buttonClear = document.createElement("button");
   buttonClear.textContent = "X";
   buttonClear.onclick = function () {
-    setState({ inputValue: "" });
+    dispatch({ type: "CLEAR_INPUT" });
+    // setState({ inputValue: "" });
   };
 
   const space = Space();
