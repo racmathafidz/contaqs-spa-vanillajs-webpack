@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run build && node src/server/index.js",
-    "build": "webpack"
+    "build:ts": "tsc",
+    "build:webpack:client": "webpack --config webpack.config.client.js",
+    "build:webpack:server": "webpack --config webpack.config.server.js",
+    "build": "npm run build:ts && npm run build:webpack:client && npm run build:webpack:server",
+    "start": "npm run build && node dist/server.js"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +20,8 @@
     "webpack-cli": "^5.1.4"
   },
   "devDependencies": {
-    "html-webpack-plugin": "^5.5.3"
+    "@types/express": "^4.17.17",
+    "html-webpack-plugin": "^5.5.3",
+    "typescript": "^5.1.6"
   }
 }
