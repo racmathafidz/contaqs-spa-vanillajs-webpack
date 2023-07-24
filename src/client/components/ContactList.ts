@@ -4,20 +4,12 @@ import Link from "./Link.js";
 import Separator from "./Separator.js";
 import FavoriteButton from "./FavoriteButton.js";
 
-// type ContactListProps = {
-//   id: number;
-//   firstName: string;
-//   lastName: string;
-//   phone: string;
-// };
-
 function ContactItem(props: any) {
   const name = Link({
     href: `/contact-detail`,
     label: `${props.firstName} ${props.lastName}`,
     onClick: () => {
       dispatch({ type: "SET_CONTACT_ID", payload: props.id });
-      // setState({ contactId: props.id });
     },
   });
 

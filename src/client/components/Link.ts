@@ -8,7 +8,6 @@ export default function Link(props: any) {
     event.preventDefault();
     const url = new URL((event.target as HTMLAnchorElement).href);
     dispatch({ type: "CHANGE_PAGE", payload: url.pathname });
-    // setState({ path: url.pathname });
     if (props.onClick) props.onClick();
   };
 

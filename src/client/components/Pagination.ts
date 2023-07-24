@@ -9,7 +9,6 @@ export default function Pagination() {
       label: `${i + 1}`,
       onClick: () => {
         dispatch({ type: "SET_PAGINATION", payload: 5 * i });
-        // setState({ pageSkip: 5 * i });
       },
     })
   );

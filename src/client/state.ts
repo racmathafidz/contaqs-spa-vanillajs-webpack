@@ -245,24 +245,6 @@ export function onStateChange(prevState: Partial<State>, nextState: State) {
     url.pathname = nextState.path;
     history.pushState(null, "", url.toString());
   }
-  // if (prevState.inputValue !== nextState.inputValue) {
-  //   setState({ pageSkip: 0 });
-  //   getContacts()
-  //     .then((data) => {
-  //       setState({
-  //         loadingContacts: false,
-  //         totalOfPages: Math.ceil(data.total / 5),
-  //         errorMessage: "",
-  //       });
-  //     })
-  //     .catch((err: any) =>
-  //       setState({
-  //         loadingContacts: false,
-  //         totalOfPages: 0,
-  //         errorMessage: err.message,
-  //       })
-  //     );
-  // }
   if (prevState.contactId !== nextState.contactId) {
     const url = new URL(window.location.href);
     if (nextState.contactId === null) {
@@ -297,7 +279,6 @@ export function onStateChange(prevState: Partial<State>, nextState: State) {
   ) {
     localStorage.setItem("inputValue", nextState.homePage.inputValue);
     dispatch({ type: "FETCH_ALL_CONTACTS" });
-    // setState({ loadingContacts: true });
 
     if (timeout) {
       clearTimeout(timeout);
@@ -311,20 +292,9 @@ export function onStateChange(prevState: Partial<State>, nextState: State) {
       })
         .then((data) => {
           dispatch({ type: "FETCH_ALL_CONTACTS_SUCCESS", payload: data });
-          // setState({
-          //   loadingContacts: false,
-          //   contacts: data.contacts,
-          //   totalOfPages: Math.ceil(data.total / 5),
-          //   errorMessage: "",
-          // });
         })
         .catch((err) => {
           dispatch({ type: "FETCH_ALL_CONTACTS_ERROR", payload: err });
-          // setState({
-          //   loadingContacts: false,
-          //   contacts: [],
-          //   errorMessage: err.message,
-          // })
         });
     }, 600);
   }

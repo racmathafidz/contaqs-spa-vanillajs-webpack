@@ -15,10 +15,6 @@ export type Contact = {
   email: string;
 };
 
-// function getAllContacts(): Promise<GetContactsResponse> {
-//   return fetch("https://dummyjson.com/users").then((res) => res.json());
-// }
-
 type GetContactsParams = {
   query: string;
   limit: number;

@@ -11,14 +11,12 @@ export default function ContactSearchInput() {
       type: "CHANGE_INPUT",
       payload: (event.target as HTMLInputElement).value,
     });
-    // setState({ inputValue: (event.target as HTMLInputElement).value });
   };
 
   const buttonClear = document.createElement("button");
   buttonClear.textContent = "X";
   buttonClear.onclick = function () {
     dispatch({ type: "CLEAR_INPUT" });
-    // setState({ inputValue: "" });
   };
 
   const space = Space();

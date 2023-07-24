@@ -14,17 +14,11 @@ export default function FavoriteButton(props: Contact) {
         type: "REMOVE_FAVORITE_STATUS",
         payload: props.id,
       });
-      // setState({
-      //   favoriteContacts: state.favoriteContacts.filter(
-      //     (e, i) => e.id !== props.id
-      //   ),
-      // });
     } else {
       dispatch({
         type: "ADD_FAVORITE_STATUS",
         payload: props,
       });
-      // setState({ favoriteContacts: [...state.favoriteContacts, props] });
     }
   };
 
