@@ -1,7 +1,15 @@
-import { setState, state, dispatch } from "../state.js";
+import { state, dispatch } from "../state.js";
+import { Contact } from "../utils/index.js";
 import Link from "./Link.js";
 import Separator from "./Separator.js";
 import FavoriteButton from "./FavoriteButton.js";
+
+// type ContactListProps = {
+//   id: number;
+//   firstName: string;
+//   lastName: string;
+//   phone: string;
+// };
 
 function ContactItem(props: any) {
   const name = Link({
@@ -33,8 +41,9 @@ function ContactItem(props: any) {
   return div;
 }
 
-export default function ContactList(props: any) {
-  let items = props.map((contact: any) =>
+export default function ContactList(props: Contact[]) {
+  console.log(props);
+  let items = props.map((contact: Contact) =>
     ContactItem({
       id: contact.id,
       firstName: contact.firstName,
@@ -50,15 +59,15 @@ export default function ContactList(props: any) {
   emptyText.textContent = "Contact Empty";
 
   const errorText = document.createElement("p");
-  errorText.textContent = state.errorMessage;
+  errorText.textContent = state.homePage.errorMessage;
 
   const div = document.createElement("div");
 
-  if (state.loadingUsers) {
+  if (state.homePage.loading) {
     div.append(loadingText);
-  } else if (state.errorMessage !== "") {
+  } else if (state.homePage.errorMessage !== "") {
     div.append(errorText);
-  } else if (state.contacts.length == 0) {
+  } else if (state.homePage.contacts.length == 0) {
     div.append(emptyText);
   } else {
     div.append(...items);

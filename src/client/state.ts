@@ -1,39 +1,102 @@
 import App from "./App.js";
-import { User, getUsers, getDetailUser } from "./utils/index.js";
+import { Contact, getContacts, getDetailContact } from "./utils/index.js";
 
 type State = {
   path: string;
-  inputValue: string;
-  loadingDetailUsers: boolean;
-  loadingUsers: boolean;
-  contacts: User[];
-  favoriteContacts: User[];
-  detailContact: User | null;
-  contactId: User["id"] | null;
-  errorMessage: string;
-  totalOfPages: number;
-  pageSkip: number;
+  contactId: Contact["id"] | null;
+  homePage: {
+    inputValue: string;
+    loading: boolean;
+    contacts: Contact[];
+    totalOfPages: number;
+    pageSkip: number;
+    errorMessage: string;
+  };
+  detailPage: {
+    loading: boolean;
+    contact: Contact | null;
+    errorMessage: string;
+  };
+  favoritePage: {
+    contacts: Contact[];
+    errorMessage: string;
+  };
 };
 
-type Action = {
-  type: string;
-  payload?: string | number | boolean | User | User[] | User["id"] | any;
-};
+type Action =
+  | { type: "FETCH_ALL_CONTACTS" }
+  | {
+      type: "FETCH_ALL_CONTACTS_SUCCESS";
+      payload: {
+        users: Contact[];
+        total: number;
+      };
+    }
+  | {
+      type: "FETCH_ALL_CONTACTS_ERROR";
+      payload: {
+        message: string;
+      };
+    }
+  | { type: "FETCH_DETAIL_CONTACT" }
+  | {
+      type: "FETCH_DETAIL_CONTACT_SUCCESS";
+      payload: Contact | null;
+    }
+  | {
+      type: "FETCH_DETAIL_CONTACT_ERROR";
+      payload: {
+        message: string;
+      };
+    }
+  | {
+      type: "CHANGE_INPUT";
+      payload: string;
+    }
+  | { type: "CLEAR_INPUT" }
+  | {
+      type: "CHANGE_PAGE";
+      payload: string;
+    }
+  | {
+      type: "SET_PAGINATION";
+      payload: number;
+    }
+  | {
+      type: "SET_CONTACT_ID";
+      payload: Contact["id"] | null;
+    }
+  | {
+      type: "ADD_FAVORITE_STATUS";
+      payload: Contact;
+    }
+  | {
+      type: "REMOVE_FAVORITE_STATUS";
+      payload: Contact["id"];
+    };
 
 const contactIdParam = new URL(window.location.href).searchParams.get("id");
 
 export let state: State = {
   path: window.location.pathname,
-  inputValue: localStorage.getItem("inputValue") ?? "",
-  loadingDetailUsers: false,
-  loadingUsers: false,
-  contacts: [],
-  favoriteContacts: [],
-  detailContact: null,
   contactId: contactIdParam ? parseInt(contactIdParam) : null,
-  errorMessage: "",
-  totalOfPages: 0,
-  pageSkip: 0,
+  homePage: {
+    inputValue: localStorage.getItem("inputValue") ?? "",
+    loading: false,
+    contacts: [],
+    totalOfPages: 0,
+    pageSkip: 0,
+    errorMessage: "",
+  },
+  detailPage: {
+    loading: false,
+    contact: null,
+    errorMessage: "",
+  },
+  favoritePage: {
+    contacts: [],
+    errorMessage: "",
+  },
 };
 
 let timeout: NodeJS.Timeout;
@@ -46,64 +109,123 @@ export function setState(newState: Partial<State>) {
   Render();
 }
 
-function reducer(prevState: Partial<State>, action: Action) {
+function reducer(prevState: State, action: Action): State {
   switch (action.type) {
-    case "FETCH_ALL_USERS": {
-      return { ...prevState, loadingUsers: true };
-    }
-    case "FETCH_ALL_USERS_SUCCESS": {
+    case "FETCH_ALL_CONTACTS": {
       return {
         ...prevState,
-        loadingUsers: false,
-        contacts: action.payload?.users,
-        totalOfPages: Math.ceil(action.payload?.total / 5),
-        errorMessage: "",
+        homePage: {
+          ...prevState.homePage,
+          loading: true,
+        },
       };
     }
-    case "FETCH_ALL_USERS_ERROR": {
+    case "FETCH_ALL_CONTACTS_SUCCESS": {
       return {
         ...prevState,
-        loadingUsers: false,
-        contacts: [],
-        errorMessage: action.payload?.message,
+        homePage: {
+          ...prevState.homePage,
+          loading: false,
+          contacts: action.payload.users,
+          totalOfPages: Math.ceil(action.payload.total / 5),
+          errorMessage: "",
+        },
       };
     }
-    case "FETCH_DETAIL_USER": {
-      return { ...prevState, loadingDetailUsers: true };
-    }
-    case "FETCH_DETAIL_USER_SUCCESS": {
+    case "FETCH_ALL_CONTACTS_ERROR": {
       return {
         ...prevState,
-        loadingDetailUsers: false,
-        detailContact: action.payload,
-        errorMessage: "",
+        homePage: {
+          ...prevState.homePage,
+          loading: false,
+          contacts: [],
+          errorMessage: action.payload.message,
+        },
       };
     }
-    case "FETCH_DETAIL_USER_ERROR": {
+    case "FETCH_DETAIL_CONTACT": {
       return {
         ...prevState,
-        loadingDetailUsers: false,
-        detailContact: null,
-        errorMessage: action.payload.message,
+        detailPage: {
+          ...prevState.detailPage,
+          loading: true,
+        },
+      };
+    }
+    case "FETCH_DETAIL_CONTACT_SUCCESS": {
+      return {
+        ...prevState,
+        detailPage: {
+          ...prevState.detailPage,
+          loading: false,
+          contact: action.payload,
+          errorMessage: "",
+        },
+      };
+    }
+    case "FETCH_DETAIL_CONTACT_ERROR": {
+      return {
+        ...prevState,
+        detailPage: {
+          ...prevState.detailPage,
+          loading: false,
+          contact: null,
+          errorMessage: action.payload.message,
+        },
       };
     }
     case "CHANGE_INPUT": {
-      return { ...prevState, inputValue: action.payload };
+      return {
+        ...prevState,
+        homePage: {
+          ...prevState.homePage,
+          inputValue: action.payload,
+        },
+      };
     }
     case "CLEAR_INPUT": {
-      return { ...prevState, inputValue: "" };
+      return {
+        ...prevState,
+        homePage: {
+          ...prevState.homePage,
+          inputValue: "",
+        },
+      };
     }
     case "CHANGE_PAGE": {
       return { ...prevState, path: action.payload };
     }
     case "SET_PAGINATION": {
-      return { ...prevState, pageSkip: action.payload };
+      return {
+        ...prevState,
+        homePage: {
+          ...prevState.homePage,
+          pageSkip: action.payload,
+        },
+      };
     }
     case "SET_CONTACT_ID": {
       return { ...prevState, contactId: action.payload };
     }
-    case "SET_FAVORITE_STATUS": {
-      return { ...prevState, favoriteContacts: action.payload };
+    case "ADD_FAVORITE_STATUS": {
+      return {
+        ...prevState,
+        favoritePage: {
+          ...prevState.favoritePage,
+          contacts: [...state.favoritePage.contacts, action.payload],
+        },
+      };
+    }
+    case "REMOVE_FAVORITE_STATUS": {
+      return {
+        ...prevState,
+        favoritePage: {
+          ...prevState.favoritePage,
+          contacts: state.favoritePage.contacts.filter(
+            (e, i) => e.id !== action.payload
+          ),
+        },
+      };
     }
     default: {
       return prevState;
@@ -125,17 +247,17 @@ export function onStateChange(prevState: Partial<State>, nextState: State) {
   }
   // if (prevState.inputValue !== nextState.inputValue) {
   //   setState({ pageSkip: 0 });
-  //   getUsers()
+  //   getContacts()
   //     .then((data) => {
   //       setState({
-  //         loadingUsers: false,
+  //         loadingContacts: false,
   //         totalOfPages: Math.ceil(data.total / 5),
   //         errorMessage: "",
   //       });
   //     })
   //     .catch((err: any) =>
   //       setState({
-  //         loadingUsers: false,
+  //         loadingContacts: false,
   //         totalOfPages: 0,
   //         errorMessage: err.message,
   //       })
@@ -147,21 +269,21 @@ export function onStateChange(prevState: Partial<State>, nextState: State) {
       url.searchParams.delete("id");
     } else {
       url.searchParams.set("id", nextState.contactId.toString());
-      dispatch({ type: "FETCH_DETAIL_USER" });
-      // setState({ loadingDetailUsers: true });
-      getDetailUser(nextState.contactId)
+      dispatch({ type: "FETCH_DETAIL_CONTACT" });
+      // setState({ loadingDetailContact: true });
+      getDetailContact(nextState.contactId)
         .then((data) => {
-          dispatch({ type: "FETCH_DETAIL_USER_SUCCESS", payload: data });
+          dispatch({ type: "FETCH_DETAIL_CONTACT_SUCCESS", payload: data });
           // setState({
-          //   loadingDetailUsers: false,
+          //   loadingDetailContact: false,
           //   detailContact: data,
           //   errorMessage: "",
           // });
         })
         .catch((err) => {
-          dispatch({ type: "FETCH_DETAIL_USER_ERROR", payload: err });
+          dispatch({ type: "FETCH_DETAIL_CONTACT_ERROR", payload: err });
           // setState({
-          //   loadingDetailUsers: false,
+          //   loadingDetailContact: false,
           //   detailContact: null,
           //   errorMessage: err.message,
           // })
@@ -170,36 +292,36 @@ export function onStateChange(prevState: Partial<State>, nextState: State) {
     history.pushState({}, "", url.toString());
   }
   if (
-    prevState.inputValue !== nextState.inputValue ||
-    prevState.pageSkip !== nextState.pageSkip
+    prevState.homePage?.inputValue !== nextState.homePage.inputValue ||
+    prevState.homePage?.pageSkip !== nextState.homePage.pageSkip
   ) {
-    localStorage.setItem("inputValue", nextState.inputValue);
-    dispatch({ type: "FETCH_ALL_USERS" });
-    // setState({ loadingUsers: true });
+    localStorage.setItem("inputValue", nextState.homePage.inputValue);
+    dispatch({ type: "FETCH_ALL_CONTACTS" });
+    // setState({ loadingContacts: true });
 
     if (timeout) {
       clearTimeout(timeout);
     }
 
     timeout = setTimeout(() => {
-      getUsers({
-        query: nextState.inputValue,
+      getContacts({
+        query: nextState.homePage.inputValue,
         limit: 5,
-        skip: nextState.pageSkip,
+        skip: nextState.homePage.pageSkip,
       })
         .then((data) => {
-          dispatch({ type: "FETCH_ALL_USERS_SUCCESS", payload: data });
+          dispatch({ type: "FETCH_ALL_CONTACTS_SUCCESS", payload: data });
           // setState({
-          //   loadingUsers: false,
-          //   contacts: data.users,
+          //   loadingContacts: false,
+          //   contacts: data.contacts,
           //   totalOfPages: Math.ceil(data.total / 5),
           //   errorMessage: "",
           // });
         })
         .catch((err) => {
-          dispatch({ type: "FETCH_ALL_USERS_ERROR", payload: err });
+          dispatch({ type: "FETCH_ALL_CONTACTS_ERROR", payload: err });
           // setState({
-          //   loadingUsers: false,
+          //   loadingContacts: false,
           //   contacts: [],
           //   errorMessage: err.message,
           // })

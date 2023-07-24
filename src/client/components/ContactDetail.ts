@@ -1,8 +1,8 @@
 import { state } from "../state.js";
 import FavoriteButton from "./FavoriteButton.js";
-import { User } from "../utils/index.js";
+import { Contact } from "../utils/index.js";
 
-function ContactDetailItem(props: User) {
+function ContactDetailItem(props: Contact) {
   const name = document.createElement("p");
   name.textContent = `${props.firstName} ${props.lastName}`;
 
@@ -40,18 +40,18 @@ export default function ContactDetail() {
   emptyText.textContent = "Contact Empty";
 
   const errorText = document.createElement("p");
-  errorText.textContent = state.errorMessage;
+  errorText.textContent = state.detailPage.errorMessage;
 
   const div = document.createElement("div");
 
-  if (state.loadingDetailUsers) {
+  if (state.detailPage.loading) {
     div.append(loadingText);
-  } else if (state.errorMessage !== "") {
+  } else if (state.detailPage.errorMessage !== "") {
     div.append(errorText);
-  } else if (state.detailContact === null) {
+  } else if (state.detailPage.contact === null) {
     div.append(emptyText);
   } else {
-    div.append(ContactDetailItem(state.detailContact));
+    div.append(ContactDetailItem(state.detailPage.contact));
   }
 
   return div;

@@ -4,7 +4,7 @@ import Space from "./Space.js";
 export default function ContactSearchInput() {
   const input = document.createElement("input");
   input.id = "input";
-  input.value = state.inputValue;
+  input.value = state.homePage.inputValue;
   input.placeholder = "Enter contact name";
   input.oninput = function (event) {
     dispatch({

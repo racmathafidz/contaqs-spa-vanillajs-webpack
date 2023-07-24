@@ -3,7 +3,7 @@ import Link from "./Link.js";
 import Space from "./Space.js";
 
 export default function Pagination() {
-  let items = [...Array(state.totalOfPages)].map((e, i) =>
+  let items = [...Array(state.homePage.totalOfPages)].map((e, i) =>
     Link({
       href: `/home`,
       label: `${i + 1}`,
@@ -18,7 +18,7 @@ export default function Pagination() {
 
   const div = document.createElement("div");
   div.append(space);
-  if (state.inputValue === "") {
+  if (state.homePage.inputValue === "") {
     div.append(...items);
   }
 
