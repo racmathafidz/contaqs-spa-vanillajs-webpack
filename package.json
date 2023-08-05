@@ -3,19 +3,22 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build:ts": "tsc",
     "build:webpack:client": "webpack --config webpack.config.client.js",
     "build:webpack:server": "webpack --config webpack.config.server.js",
-    "build": "npm run build:ts && npm run build:webpack:client && npm run build:webpack:server",
-    "start": "npm run build && node dist/server.js"
+    "build": "npm run build:webpack:client --mode=production && npm run build:webpack:server --mode=production",
+    "start": "node dist/server.js",
+    "dev": "concurrently \"npm run build:webpack:server -- --watch --mode=development\" \"npm run build:webpack:client -- --watch --mode=development\" \"nodemon dist/server.js\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "concurrently": "^8.2.0",
     "express": "^4.18.2",
     "lodash": "^4.17.21",
+    "nodemon": "^3.0.1",
     "path": "^0.12.7",
+    "ts-loader": "^9.4.4",
     "webpack": "^5.88.1",
     "webpack-cli": "^5.1.4"
   },

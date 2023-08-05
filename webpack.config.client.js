@@ -3,7 +3,19 @@ const path = require("path");
 
 module.exports = {
     target: "web",
-    entry: "./dist-js/client/index.js",
+    entry: "./src/client/index.ts",
+    module: {
+        rules: [
+            {
+                test: /\.ts?$/,
+                use: "ts-loader",
+                exclude: /node_modules/,
+            },
+        ],
+    },
+    resolve: {
+        extensions: [".ts", ".js"],
+    },
     output: {
         filename: "index.js",
         path: path.resolve(__dirname, "dist", "public"),
