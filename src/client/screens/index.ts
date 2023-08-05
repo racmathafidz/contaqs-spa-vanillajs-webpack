@@ -1,5 +1,5 @@
-import DetailScreen from "./DetailScreen.js";
-import FavoriteScreen from "./FavoriteScreen.js";
-import HomeScreen from "./HomeScreen.js";
+import DetailScreen from "./DetailScreen";
+import FavoriteScreen from "./FavoriteScreen";
+import HomeScreen from "./HomeScreen";
 
 export { DetailScreen, FavoriteScreen, HomeScreen };

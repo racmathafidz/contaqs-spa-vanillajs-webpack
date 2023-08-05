@@ -1,8 +1,8 @@
-import { state, dispatch } from "../state.js";
-import { Contact } from "../utils/index.js";
-import Link from "./Link.js";
-import Separator from "./Separator.js";
-import FavoriteButton from "./FavoriteButton.js";
+import { state, dispatch } from "../state";
+import { Contact } from "../utils/index";
+import Link from "./Link";
+import Separator from "./Separator";
+import FavoriteButton from "./FavoriteButton";
 
 function ContactItem(props: any) {
   const name = Link({
@@ -33,9 +33,12 @@ function ContactItem(props: any) {
   return div;
 }
 
-export default function ContactList(props: Contact[]) {
-  console.log(props);
-  let items = props.map((contact: Contact) =>
+type ContactListProps = {
+  contacts: Contact[];
+};
+
+export default function ContactList(props: ContactListProps) {
+  let items = props.contacts.map((contact) =>
     ContactItem({
       id: contact.id,
       firstName: contact.firstName,
@@ -44,26 +47,9 @@ export default function ContactList(props: Contact[]) {
     })
   );
 
-  const loadingText = document.createElement("p");
-  loadingText.textContent = "Loading Contacts...";
-
-  const emptyText = document.createElement("p");
-  emptyText.textContent = "Contact Empty";
-
-  const errorText = document.createElement("p");
-  errorText.textContent = state.homePage.errorMessage;
-
   const div = document.createElement("div");
 
-  if (state.homePage.loading) {
-    div.append(loadingText);
-  } else if (state.homePage.errorMessage !== "") {
-    div.append(errorText);
-  } else if (state.homePage.contacts.length == 0) {
-    div.append(emptyText);
-  } else {
-    div.append(...items);
-  }
+  div.append(...items);
 
   return div;
 }

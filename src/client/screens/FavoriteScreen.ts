@@ -1,7 +1,7 @@
-import { state } from "../state.js";
-import Link from "../components/Link.js";
-import Space from "../components/Space.js";
-import ContactList from "../components/ContactList.js";
+import { state } from "../state";
+import Link from "../components/Link";
+import Space from "../components/Space";
+import ContactList from "../components/ContactList";
 
 export default function FavoriteScreen() {
   const linkHome = Link({
@@ -12,7 +12,7 @@ export default function FavoriteScreen() {
   const div = document.createElement("div");
   div.append(linkHome);
   div.append(Space());
-  div.append(ContactList(state.favoritePage.contacts));
+  div.append(ContactList({ contacts: state.favoritePage.contacts }));
 
   return div;
 }

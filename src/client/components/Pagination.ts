@@ -1,6 +1,6 @@
-import { state, setState, dispatch } from "../state.js";
-import Link from "./Link.js";
-import Space from "./Space.js";
+import { state, setState, dispatch } from "../state";
+import Link from "./Link";
+import Space from "./Space";
 
 export default function Pagination() {
   let items = [...Array(state.homePage.totalOfPages)].map((e, i) =>

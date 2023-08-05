@@ -1,4 +1,4 @@
-import { Render, state, onStateChange } from "./state.js";
+import { Render, setState } from "./state";
 
 Render();
-onStateChange({}, state);
+setState({});

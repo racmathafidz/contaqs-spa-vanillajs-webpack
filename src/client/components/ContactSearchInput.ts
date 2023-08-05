@@ -1,5 +1,5 @@
-import { state, setState, dispatch } from "../state.js";
-import Space from "./Space.js";
+import { state, setState, dispatch } from "../state";
+import Space from "./Space";
 
 export default function ContactSearchInput() {
   const input = document.createElement("input");

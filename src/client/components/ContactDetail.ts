@@ -1,6 +1,6 @@
-import { state } from "../state.js";
-import FavoriteButton from "./FavoriteButton.js";
-import { Contact } from "../utils/index.js";
+import { state } from "../state";
+import FavoriteButton from "./FavoriteButton";
+import { Contact } from "../utils/index";
 
 function ContactDetailItem(props: Contact) {
   const name = document.createElement("p");
@@ -44,7 +44,7 @@ export default function ContactDetail() {
 
   const div = document.createElement("div");
 
-  if (state.detailPage.loading) {
+  if (state.detailPage.tag === "loading") {
     div.append(loadingText);
   } else if (state.detailPage.errorMessage !== "") {
     div.append(errorText);

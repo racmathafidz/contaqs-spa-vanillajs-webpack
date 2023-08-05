@@ -1,4 +1,4 @@
-import { setState, dispatch } from "../state.js";
+import { setState, dispatch } from "../state";
 
 export default function Link(props: any) {
   const link = document.createElement("a");

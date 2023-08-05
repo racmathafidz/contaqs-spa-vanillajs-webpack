@@ -1,5 +1,5 @@
-import { state, dispatch } from "../state.js";
-import { Contact } from "../utils/index.js";
+import { state, dispatch } from "../state";
+import { Contact } from "../utils/index";
 
 export default function FavoriteButton(props: Contact) {
   const isFavorite = state.favoritePage.contacts.some(

@@ -1,7 +1,7 @@
-import { state } from "../state.js";
-import Link from "../components/Link.js";
-import Space from "../components/Space.js";
-import ContactDetail from "../components/ContactDetail.js";
+import { state } from "../state";
+import Link from "../components/Link";
+import Space from "../components/Space";
+import ContactDetail from "../components/ContactDetail";
 
 export default function DetailScreen() {
   const linkHome = Link({
